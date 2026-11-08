@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="assets/img/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" href="assets/img/favicon-32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="assets/img/favicon-16.png" sizes="16x16" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <title>OpenADMET CYP Challenge — Model Report</title>
+  <meta name="description" content="Post-challenge model report for the OpenADMET CYP Blind Challenge: regression rank 27 of 103, classification rank 7 of 62." />
+  <link rel="canonical" href="https://n283t.github.io/openadmet-cyp-model-report/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="OpenADMET CYP Challenge model report" />
+  <meta property="og:title" content="OpenADMET CYP Challenge — Model Report" />
+  <meta property="og:description" content="Post-challenge model report for the OpenADMET CYP Blind Challenge: regression rank 27 of 103, classification rank 7 of 62." />
+  <meta property="og:url" content="https://n283t.github.io/openadmet-cyp-model-report/" />
+  <script>
+    /* Set the theme before first paint to avoid a flash of the wrong colors. */
+    (function () {
+      var stored = null;
+      try { stored = localStorage.getItem("theme"); } catch (e) {}
+      var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.dataset.theme =
+        stored === "light" || stored === "dark" ? stored : prefersDark ? "dark" : "light";
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="nav-menu-wrap">
+      <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Table of contents" title="Table of contents">
+        <span class="nav-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <nav id="nav-menu" class="nav-menu" aria-label="Table of contents" hidden>
+        <p class="nm-title">CYP&nbsp;·&nbsp;Regression&nbsp;+&nbsp;TDI</p>
+        <a class="nm-link" href="#top"><span class="nm-num" aria-hidden="true">↑</span><span>Top</span></a>
+        <hr class="nm-sep" />
+        <a class="nm-link" href="#tldr" data-sn="tldr"><span class="nm-num">0</span><span>TL;DR</span></a>
+        <a class="nm-link" href="#challenge" data-sn="challenge"><span class="nm-num">1</span><span>The challenge</span></a>
+        <a class="nm-link" href="#results" data-sn="results"><span class="nm-num">2</span><span>Results</span></a>
+        <a class="nm-link nm-sub" href="#three-boards" data-sn="three-boards"><span>Three boards</span></a>
+        <a class="nm-link" href="#regression" data-sn="regression"><span class="nm-num">3</span><span>Regression model</span></a>
+        <a class="nm-link" href="#classification" data-sn="classification"><span class="nm-num">4</span><span>Classification model</span></a>
+        <a class="nm-link nm-sub" href="#d6-pseudo" data-sn="d6-pseudo"><span>2D6 pseudo-negatives</span></a>
+        <a class="nm-link nm-sub" href="#a4-equal7" data-sn="a4-equal7"><span>3A4 equal mean</span></a>
+        <a class="nm-link" href="#validation" data-sn="validation"><span class="nm-num">5</span><span>Validation</span></a>
+        <a class="nm-link" href="#negatives" data-sn="negatives"><span class="nm-num">6</span><span>What did not work</span></a>
+        <a class="nm-link" href="#conclusion" data-sn="conclusion"><span class="nm-num">7</span><span>Conclusion</span></a>
+        <hr class="nm-sep" />
+        <a class="nm-link" href="#links" data-sn="links"><span class="nm-num"></span><span>Reproducibility and links</span></a>
+      </nav>
+    </div>
+    <nav class="header-links" aria-label="Resources">
+      <a href="https://github.com/N283T/openadmet-cyp-challenge" target="_blank" rel="noopener" aria-label="Code on GitHub" title="Code on GitHub">
+        <svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      </a>
+      <a href="https://huggingface.co/spaces/openadmet/cyp-challenge" target="_blank" rel="noopener" aria-label="Challenge on Hugging Face" title="Challenge on Hugging Face">
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" fill="currentColor"><path d="M12.025 1.13c-5.77 0-10.449 4.647-10.449 10.378 0 1.112.178 2.181.503 3.185.064-.222.203-.444.416-.577a.96.96 0 0 1 .524-.15c.293 0 .584.124.84.284.278.173.48.408.71.694.226.282.458.611.684.951v-.014c.017-.324.106-.622.264-.874s.403-.487.762-.543c.3-.047.596.06.787.203s.31.313.4.467c.15.257.212.468.233.542.01.026.653 1.552 1.657 2.54.616.605 1.01 1.223 1.082 1.912.055.537-.096 1.059-.38 1.572.637.121 1.294.187 1.967.187.657 0 1.298-.063 1.921-.178-.287-.517-.44-1.041-.384-1.581.07-.69.465-1.307 1.081-1.913 1.004-.987 1.647-2.513 1.657-2.539.021-.074.083-.285.233-.542.09-.154.208-.323.4-.467a1.08 1.08 0 0 1 .787-.203c.359.056.604.29.762.543s.247.55.265.874v.015c.225-.34.457-.67.683-.952.23-.286.432-.52.71-.694.257-.16.547-.284.84-.285a.97.97 0 0 1 .524.151c.228.143.373.388.43.625l.006.04a10.3 10.3 0 0 0 .534-3.273c0-5.731-4.678-10.378-10.449-10.378M8.327 6.583a1.5 1.5 0 0 1 .713.174 1.487 1.487 0 0 1 .617 2.013c-.183.343-.762-.214-1.102-.094-.38.134-.532.914-.917.71a1.487 1.487 0 0 1 .69-2.803m7.486 0a1.487 1.487 0 0 1 .689 2.803c-.385.204-.536-.576-.916-.71-.34-.12-.92.437-1.103.094a1.487 1.487 0 0 1 .617-2.013 1.5 1.5 0 0 1 .713-.174m-10.68 1.55a.96.96 0 1 1 0 1.921.96.96 0 0 1 0-1.92m13.838 0a.96.96 0 1 1 0 1.92.96.96 0 0 1 0-1.92M8.489 11.458c.588.01 1.965 1.157 3.572 1.164 1.607-.007 2.984-1.155 3.572-1.164.196-.003.305.12.305.454 0 .886-.424 2.328-1.563 3.202-.22-.756-1.396-1.366-1.63-1.32q-.011.001-.02.006l-.044.026-.01.008-.03.024q-.018.017-.035.036l-.032.04a1 1 0 0 0-.058.09l-.014.025q-.049.088-.11.19a1 1 0 0 1-.083.116 1.2 1.2 0 0 1-.173.18q-.035.029-.075.058a1.3 1.3 0 0 1-.251-.243 1 1 0 0 1-.076-.107c-.124-.193-.177-.363-.337-.444-.034-.016-.104-.008-.2.022q-.094.03-.216.087-.06.028-.125.063l-.13.074q-.067.04-.136.086a3 3 0 0 0-.135.096 3 3 0 0 0-.26.219 2 2 0 0 0-.12.121 2 2 0 0 0-.106.128l-.002.002a2 2 0 0 0-.09.132l-.001.001a1.2 1.2 0 0 0-.105.212q-.013.036-.024.073c-1.139-.875-1.563-2.317-1.563-3.203 0-.334.109-.457.305-.454m.836 10.354c.824-1.19.766-2.082-.365-3.194-1.13-1.112-1.789-2.738-1.789-2.738s-.246-.945-.806-.858-.97 1.499.202 2.362c1.173.864-.233 1.45-.685.64-.45-.812-1.683-2.896-2.322-3.295s-1.089-.175-.938.647 2.822 2.813 2.562 3.244-1.176-.506-1.176-.506-2.866-2.567-3.49-1.898.473 1.23 2.037 2.16c1.564.932 1.686 1.178 1.464 1.53s-3.675-2.511-4-1.297c-.323 1.214 3.524 1.567 3.287 2.405-.238.839-2.71-1.587-3.216-.642-.506.946 3.49 2.056 3.522 2.064 1.29.33 4.568 1.028 5.713-.624m5.349 0c-.824-1.19-.766-2.082.365-3.194 1.13-1.112 1.789-2.738 1.789-2.738s.246-.945.806-.858.97 1.499-.202 2.362c-1.173.864.233 1.45.685.64.451-.812 1.683-2.896 2.322-3.295s1.089-.175.938.647-2.822 2.813-2.562 3.244 1.176-.506 1.176-.506 2.866-2.567 3.49-1.898-.473 1.23-2.037 2.16c-1.564.932-1.686 1.178-1.464 1.53s3.675-2.511 4-1.297c.323 1.214-3.524 1.567-3.287 2.405.238.839 2.71-1.587 3.216-.642.506.946-3.49 2.056-3.522 2.064-1.29.33-4.568 1.028-5.713-.624"/></svg>
+      </a>
+    </nav>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme">◐</button>
+  </div>
+</header>
+
+<nav class="section-nav" aria-label="On this page">
+  <a class="sn-link" href="#top"><span class="sn-dot"></span><span>Top</span></a>
+  <a class="sn-link" href="#tldr" data-sn="tldr"><span class="sn-dot"></span><span>TL;DR</span></a>
+  <a class="sn-link" href="#challenge" data-sn="challenge"><span class="sn-dot"></span><span>Challenge</span></a>
+  <a class="sn-link" href="#results" data-sn="results"><span class="sn-dot"></span><span>Results</span></a>
+  <a class="sn-link sn-sub" href="#three-boards" data-sn="three-boards" hidden><span class="sn-dot"></span><span>Boards</span></a>
+  <a class="sn-link" href="#regression" data-sn="regression"><span class="sn-dot"></span><span>Regression</span></a>
+  <a class="sn-link" href="#classification" data-sn="classification"><span class="sn-dot"></span><span>Classification</span></a>
+  <a class="sn-link sn-sub" href="#d6-pseudo" data-sn="d6-pseudo" hidden><span class="sn-dot"></span><span>2D6</span></a>
+  <a class="sn-link sn-sub" href="#a4-equal7" data-sn="a4-equal7" hidden><span class="sn-dot"></span><span>3A4</span></a>
+  <a class="sn-link" href="#validation" data-sn="validation"><span class="sn-dot"></span><span>Validation</span></a>
+  <a class="sn-link" href="#negatives" data-sn="negatives"><span class="sn-dot"></span><span>Negatives</span></a>
+  <a class="sn-link" href="#conclusion" data-sn="conclusion"><span class="sn-dot"></span><span>Conclusion</span></a>
+  <a class="sn-link" href="#links" data-sn="links"><span class="sn-dot"></span><span>Links</span></a>
+</nav>
+
+<main id="top" class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">OpenADMET CYP Blind Challenge · closed 2026-11-03</p>
+    <h1>CYP inhibition and TDI prediction for 750 blinded compounds</h1>
+    <p class="lede">
+      Post-challenge model report by N283T: regression rank 27 of 103 and classification rank 7 of 62
+      on the final leaderboard.
+    </p>
+    <div class="result-cards">
+      <div class="result-card">
+        <span class="rc-label">Regression · final</span>
+        <span class="rc-rank">Rank 27 / 103</span>
+        <span class="rc-metric">MA-ST-RAE 0.4432 · Tier 8</span>
+      </div>
+      <div class="result-card">
+        <span class="rc-label">Classification · final</span>
+        <span class="rc-rank">Rank 7 / 62</span>
+        <span class="rc-metric">MA-MCC 0.4034 · Tier 2</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="tldr">
+    <h2>0. TL;DR</h2>
+    <ul>
+      <li>Two tracks. <strong>Regression</strong> (direct-inhibition pIC50 for CYP1A2, 2C9, 2D6 and 3A4) finished
+        <strong>27th of 103</strong>, mid-table. <strong>Classification</strong> (time-dependent inhibition calls for CYP2D6 and 3A4)
+        finished <strong>7th of 62</strong>, in the second significance tier behind three entries.</li>
+      <li>Every regression column is a <a href="#regression">per-endpoint ensemble</a> of tabular readouts
+        (TabPFN, TabICL, LightGBM) over descriptors, frozen pretrained embeddings and Boltz-2 trunk features.
+        The output was rescaled to a fixed mean and spread. That single placement step was the largest regression gain of the whole challenge, and it deserves a caveat (see <a href="#regression">section 3</a>).</li>
+      <li>The one idea I would keep from <a href="#classification">classification</a>: every supplied CYP2D6 TDI label sits on a
+        primary-screen hit, so molecules that were clearly inactive in the primary screen were added as
+        <strong>pseudo-negatives</strong>. This fixed a coverage defect in the training labels, and the device validated on labels it never saw.</li>
+      <li>The last month taught one lesson: <a href="#validation">small cross-validation gains did not transfer</a>. Nearly every late regression blend
+        that looked better in development was worse on the leaderboard, and the final entries are simply the best-observed columns.</li>
+    </ul>
+  </section>
+
+  <section id="challenge">
+    <h2>1. The challenge</h2>
+    <p>
+      The OpenADMET CYP Blind Challenge asked for predictions on 750 blinded compounds. For background,
+      assays and rules, see the official pages:
+    </p>
+    <div class="official-links">
+      <a class="btn ghost" href="https://openadmet.ghost.io/announcing-openadmets-cyp-inhibition-blind-challenge/">Official announcement ↗</a>
+      <a class="btn ghost" href="https://huggingface.co/spaces/openadmet/cyp-challenge">Challenge on Hugging Face ↗</a>
+    </div>
+    <figure class="chart-figure" id="tbl-task">
+      <table class="spec-table">
+      <thead>
+        <tr><th>Item</th><th>Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>Regression</th><td class="val">ST-RAE</td><td>pIC50 for 1A2, 2C9, 2D6, 3A4; error is measured to the nearest bound of the fitted credible interval; ranked on the macro average</td></tr>
+        <tr><th>Classification</th><td class="val">MCC</td><td>is the IC50 shift after preincubation above 2-fold, for 2D6 and 3A4; only confidently labelled compounds are scored</td></tr>
+        <tr><th>Test set</th><td class="val">750</td><td>the same compounds for both tracks</td></tr>
+        <tr><th>Live board</th><td class="val">≈ half</td><td>scored during the challenge on part of the test set, latest submission shown</td></tr>
+        <tr><th>Interim board</th><td class="val">full</td><td>a one-off snapshot of the 09-24 entries, then frozen</td></tr>
+        <tr><th>Final board</th><td class="val">full</td><td>the last submission of each entrant, released after the close</td></tr>
+      </tbody>
+      </table>
+      <figcaption>Table 1: The setup. Both tracks allowed one upload per 12 hours.</figcaption>
+    </figure>
+  </section>
+
+  <section id="results">
+    <h2>2. Results</h2>
+    <p>The scored entries are the last uploads, both made on 2026-11-03.</p>
+    <figure class="chart-figure" id="tbl-final">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Target</th><th>Final value</th><th>Final rank</th><th>Best entry</th></tr></thead>
+        <tbody>
+          <tr class="hi"><th>Regression · MA-ST-RAE</th><td>0.4432</td><td>27 / 103</td><td>0.3409</td></tr>
+          <tr><th>CYP1A2 pIC50</th><td>0.4421</td><td>33</td><td>0.3356</td></tr>
+          <tr><th>CYP2C9 pIC50</th><td>0.3587</td><td>17</td><td>0.2849</td></tr>
+          <tr><th>CYP2D6 pIC50</th><td>0.5852</td><td>26</td><td>0.4351</td></tr>
+          <tr><th>CYP3A4 pIC50</th><td>0.3868</td><td>34</td><td>0.2979</td></tr>
+          <tr class="hi"><th>Classification · MA-MCC</th><td>0.4034</td><td>7 / 62</td><td>0.4980</td></tr>
+          <tr><th>CYP2D6 TDI</th><td>0.3046</td><td>10</td><td>0.4899</td></tr>
+          <tr><th>CYP3A4 TDI</th><td>0.5023</td><td>7</td><td>0.5524</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 2: Final leaderboard. ST-RAE is lower-is-better and MCC is higher-is-better. Endpoint ranks are on each endpoint's own board.</figcaption>
+    </figure>
+
+    <figure class="chart-figure">
+      <div id="chart-strip-reg" class="chart" style="height:380px"></div>
+      <div id="chart-strip-cls" class="chart" style="height:280px"></div>
+      <figcaption>Figure 1: Every final entry (blue), ours (coral, with rank) and the winner (teal diamond). The axis is oriented so that better is to the right.</figcaption>
+    </figure>
+
+    <h3 id="three-boards">Three boards, one entry</h3>
+    <p>
+      Where a target's predictions did not change after the 09-24 Interim entry (regression 2C9 and 3A4, classification 3A4),
+      the Final value and its bootstrap standard deviation match Interim to every printed digit. The Final board therefore
+      scores the full test set, like Interim. That makes Interim against Final the one clean comparison of what the last six weeks bought.
+      The answer is <strong>CYP2D6 only</strong>: regression 2D6 ST-RAE went from 0.6104 to 0.5852 and 2D6 TDI MCC from 0.2573 to 0.3046.
+      Nothing else moved.
+    </p>
+    <figure class="chart-figure">
+      <div id="chart-boards" class="chart" style="height:340px"></div>
+      <figcaption>Figure 2: Change from our 09-24 Interim entry, signed so that up is better. Live (hollow) used about half of the test set and
+        was better than Final on four of the eight boards and worse on the other four. During the challenge it was a noisy view of the final metric.</figcaption>
+    </figure>
+    <p class="metrics-key">Final, Interim and Live ranks are not comparable with each other: the boards hold different sets of entries
+      (the Final board lists 103 and 62 entries against 282 and 164 users on the last Live board).</p>
+  </section>
+
+  <section id="regression">
+    <h2>3. Regression model</h2>
+    <p>
+      Each endpoint has its own ensemble, built and selected separately. The pieces they share:
+    </p>
+    <ul>
+      <li><strong>Tabular readouts.</strong> TabPFN (2.6 and 3.5), TabICL, LightGBM and, for some members, CatBoost and ExtraTrees,
+        on Mordred descriptors, Morgan fingerprints and frozen embeddings (<a href="https://github.com/JacksonBurns/chemeleon">CheMeleon</a>
+        raw and PCA-256).</li>
+      <li><strong>The primary screen as a feature.</strong> The challenge's single-concentration primary-screen readout (log2fc) is
+        predicted out of fold and fed to the readouts. Members carrying it are the <code>*_log2fc</code> rows.</li>
+      <li><strong>External multi-task supervision.</strong> 156,372 public CYP potency observations on 35,320 compounds from
+        ChEMBL 36, PubChem AID1851 and Tox21 P450-Glo, with every challenge connectivity block removed, train a 59-task encoder
+        whose scores feed the <code>anchor59</code> and <code>pub030</code> members.</li>
+      <li><strong>Community encoders.</strong> Frozen CYP-adapted encoders from the public reproduction kit of another participant
+        (<a href="https://github.com/jeremycheminf/openadmet_scripts">jeremycheminf/openadmet_scripts</a>), the <code>jeremy_*</code> members.</li>
+      <li><strong>Boltz-2 trunk features.</strong> Pooled single and pair representations of each ligand in the CYP/heme complex,
+        in two 1A2 members and a 0.2-weight 2D6 branch.</li>
+      <li><strong>Placement.</strong> Each column is rescaled to a fixed mean and standard deviation, so that only its ranking is learned.
+        The target moments are not mine: another participant (SuperCowPowers) inferred them for the blind labels by submitting affine-transformed predictions
+        and reading the leaderboard, published the constants, and a second participant's reproduction kit reused them. I adopted them.
+        For 2D6 this one step moved Live ST-RAE from 1.354 to 0.566 on 2026-09-13, more than any model change afterwards.
+        It is information about the test set obtained from leaderboard feedback, not modelling skill, so read the regression ranks with that in mind.</li>
+    </ul>
+    <figure class="chart-figure" id="tbl-reg">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Endpoint</th><th>Ensemble</th><th>Dev ST-RAE</th><th>Since</th></tr></thead>
+        <tbody>
+          <tr><th>CYP1A2</th><td style="text-align:left;font-weight:500;color:var(--ink)">equal mean of ten members; two replaced by Boltz trunk readouts</td><td>0.671</td><td>10-01</td></tr>
+          <tr><th>CYP2C9</th><td style="text-align:left;font-weight:500;color:var(--ink)">fold-stable equal subset of the 2C9 bank</td><td>0.455</td><td>09-17</td></tr>
+          <tr><th>CYP2D6</th><td style="text-align:left;font-weight:500;color:var(--ink)">0.4 two-member core, 0.4 robust bound branch, 0.2 Boltz trunk LightGBM; then a 0.1 CYPMol blend</td><td>0.820</td><td>10-29</td></tr>
+          <tr><th>CYP3A4</th><td style="text-align:left;font-weight:500;color:var(--ink)">nine-member Caruana, including an encoder of the TDI-condition pIC50 arm</td><td>0.395</td><td>09-17</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 3: The final regression columns. Development ST-RAE is series-grouped five-fold out-of-fold error, on a different scale from the leaderboard.</figcaption>
+    </figure>
+    <p>
+      Two endpoint-specific pieces did measurable work. For <strong>3A4</strong>, a learned representation of the TDI-condition pIC50
+      column (the same assay after preincubation) carries about a fifth of the Caruana weight. For <strong>2D6</strong>, a robust branch fits pIC50
+      with a pseudo-Huber loss plus a one-sided penalty on predictions above pIC50 4 for 2,823 compounds with a weak measured primary response.
+      It encodes "these are probably inactive" without inventing labels.
+    </p>
+  </section>
+
+  <section id="classification">
+    <h2>4. Classification model</h2>
+    <h3 id="d6-pseudo">CYP2D6 TDI: pseudo-negatives from the primary screen</h3>
+    <p>
+      Every supplied 2D6 TDI label is on a molecule that was a hit in the primary screen; the weakest has log2fc −0.59.
+      The published 7.06% positive rate of the blind set implies that most of its scored molecules are not of that kind.
+      A model trained on the labels alone has never seen the easy negatives.
+      I added the 2,693 unlabelled molecules with primary log2fc ≥ −0.25 as assigned negatives and excluded the borderline band.
+      The resulting pool has 4,190 molecules and 7.73% positives.
+    </p>
+    <p>
+      The rule was checked where labels exist. Among 638 labelled 1A2, 2C9 and 3A4 TDI rows at log2fc ≥ −0.25 there are zero positives
+      (exact 95% upper bound 0.47%). Inducing the same coverage defect on 3A4 and repairing it with the device recovers the whole recoverable gap
+      on labels no arm saw.
+    </p>
+    <p>
+      The deployed score is an equal percentile-rank mean of the September 15 D6 ensemble and a LightGBM on the pseudo-negative pool. It calls the top 49 of 750.
+      49 is the historical call count. The development optimum is flatter and wider (94–112 calls), but the difference from 49 (+0.01 to +0.02 MCC) was below what the board could resolve,
+      so it was never changed.
+    </p>
+    <p class="note">
+      On Live this payload moved 2D6 MCC from 0.118 to 0.364. Reconstructed from the published bootstrap aggregates, that move was one more
+      true positive and three fewer false positives among about 26 scored positives, which is inside an exchangeable null. On the full test set the
+      Final value is 0.3046, against 0.2573 for the 09-24 entry.
+    </p>
+    <h3 id="a4-equal7">CYP3A4 TDI: seven-member equal mean</h3>
+    <p>
+      An equal mean of seven members: a CheMeleon + log2fc + Mordred TabPFN; four TabPFN/TabICL readouts of the community encoders (PCA and raw);
+      an external-class + Mordred LightGBM; and a PXR-transfer / Admetica model. Exhaustive fixed-subset selection with the held fold excluded picked the same seven in all five folds.
+      It calls 249 of 750 and did not change after September 15. Raising the call count to 275 on development evidence cost 0.046 MCC on Live and was reverted.
+      Eleven later pool and gate variants did not beat it.
+    </p>
+  </section>
+
+  <section id="validation">
+    <h2>5. Validation, and why the Live board misled</h2>
+    <p>
+      Regression used a <strong>series-grouped five-fold split</strong> that keeps every connectivity series inside one fold, with a scaffold split
+      as a fixed secondary readout. Classification used UMAP-cluster and scaffold five-fold. Uncertainty came from grouped molecule bootstraps.
+      Members were combined with equal means where defensible and with Caruana or exhaustive subset selection, with step counts taken from inner folds.
+    </p>
+    <p>
+      The recurring failure was transfer. From late October I searched hard for better regression columns. The search included a nested selection over 728 out-of-fold columns from
+      406 runs and frozen embeddings from MONROE, MiniMol, OrbMol, CYPMol and fifteen CheMeleon variants. Several blends improved development ST-RAE by 0.004–0.009.
+      Of the late blends I sent, <strong>only the 2D6 CYPMol blend held up on Live</strong> (−0.003). The rest were worse, while the unchanged 2C9 column reproduced exactly as a control.
+      A post-mortem located the reason. The blends helped the bulk of the cross-validation cohort and hurt the rows that are analogs of training anchors,
+      which are the closest stand-in for the official analog-expansion test set. On those rows the incumbent was the best single column by a wide margin.
+    </p>
+    <p class="note">
+      If I did this again, I would make the analog rows the primary validation objective from day one. A gain below about 0.01 ST-RAE should not count as a decision.
+    </p>
+  </section>
+
+  <section id="negatives">
+    <h2>6. What did not work</h2>
+    <ul>
+      <li>Fine-tuning MONROE, with challenge auxiliaries or after external CYP pretraining: worse than its own frozen readout.</li>
+      <li>Frozen MONROE, MiniMol, OrbMol-v2 and CYPMol embeddings in the regression ensembles: blends moved ST-RAE by at most 0.006, and none transferred.</li>
+      <li>Fifteen CheMeleon pretraining-target variants × six depths × two readouts (192 members) for 3A4: best 0.466 against the incumbent's 0.395. The members differ in representation but share their errors.</li>
+      <li>Boltz-2 trunk features for TDI: better ranking, no gain at the call boundary. A blend that used them dropped Live 2D6 MCC from 0.309 to 0.105.</li>
+      <li>Replacing the pseudo-negative LightGBM with a MONROE-pretrained one: Live 2D6 0.364 → 0.336, reverted.</li>
+      <li>Changing call counts (2D6 75/95/112, 3A4 275): indistinguishable in development, or worse on Live.</li>
+      <li>Further affine recalibration beyond the fixed placement: worse on Live, reverted.</li>
+    </ul>
+  </section>
+
+  <section id="conclusion">
+    <h2>7. Conclusion</h2>
+    <p>
+      Mid-table in regression, near the top in classification. Looking back, three things did real work:
+    </p>
+    <ul>
+      <li><strong>Placement</strong>: fixing the output mean and spread, a one-line change that beat every model change.</li>
+      <li><strong>Pseudo-negatives</strong>: reading the primary screen as a source of labels the TDI data was missing.</li>
+      <li><strong>Leaving well alone</strong>: the final entries are the best-observed columns, after a month of searches that did not transfer.</li>
+    </ul>
+    <p>
+      On a personal note, this went less well than the PXR challenge, and I will be honest about why. I lost momentum around the midpoint.
+      The last weeks were mostly a search for small blends that the leaderboard kept refusing, and I was running it out of habit more than conviction.
+      As before, most of the work went through AI coding agents, and everything ran on one home PC.
+      The research log, including every failed run, is public in the working repository below.
+    </p>
+    <p>
+      Thanks to the <a href="https://openadmet.org/">OpenADMET</a> team for running the challenge and releasing the data, and to the participants
+      who shared their code and analyses publicly. Some of the members above are built directly on that shared work.
+    </p>
+  </section>
+
+  <section id="links">
+    <h2>Reproducibility and links</h2>
+    <ul>
+      <li>Working repository (code, configs, research log with run IDs): <a href="https://github.com/N283T/openadmet-cyp-challenge">N283T/openadmet-cyp-challenge</a></li>
+      <li>Research log: <a href="https://github.com/N283T/openadmet-cyp-challenge/blob/main/docs/research/README.md">docs/research</a> (final result in RL0239)</li>
+      <li>Final leaderboard snapshot used for the charts: <a href="https://github.com/N283T/openadmet-cyp-challenge/tree/main/artifacts/tracked/leaderboard-final-20261108">leaderboard-final-20261108</a></li>
+      <li>Challenge page: <a href="https://huggingface.co/spaces/openadmet/cyp-challenge">openadmet/cyp-challenge</a></li>
+      <li>Earlier report, PXR challenge: <a href="https://n283t.github.io/openadmet-pxr-model-report/">openadmet-pxr-model-report</a></li>
+      <li>Licences for the bundled library and fonts: <a href="https://github.com/N283T/openadmet-cyp-model-report/tree/main/docs/assets/vendor/LICENSES">LICENSES</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>OpenADMET CYP Challenge · Regression 27 / 103 · Classification 7 / 62 · Report by N283T</p>
+  </div>
+</footer>
+
+<script>
+  window.CYP_DATA_BASE = "assets/data/";
+</script>
+<script src="assets/vendor/echarts.min.js"></script>
+<script src="assets/js/charts.js"></script>
+<script>
+  // Header menu, a disclosure: the panel holds plain in-page links, so no menu
+  // roles — they would promise arrow-key navigation this does not implement.
+  (function () {
+    var btn = document.getElementById("nav-toggle");
+    var menu = document.getElementById("nav-menu");
+    if (!btn || !menu) return;
+    function isOpen() { return btn.getAttribute("aria-expanded") === "true"; }
+    function onKey(e) { if (e.key === "Escape" || e.key === "Esc") close(true); }
+    function onOutside(e) { if (!menu.contains(e.target) && !btn.contains(e.target)) close(false); }
+    function open() {
+      menu.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      document.addEventListener("keydown", onKey);
+      // Capture phase, so a click anywhere dismisses before that click acts on
+      // its own target. Registering here cannot catch the opening click: its
+      // own capture pass through document is already over.
+      document.addEventListener("click", onOutside, true);
+    }
+    // refocus asks for the button back, but only if focus is still ours to
+    // move: Escape listens on the whole document, and a reader who tabbed out
+    // of the panel should not be yanked back to the header by it.
+    function close(refocus) {
+      var held = menu.contains(document.activeElement) || document.activeElement === btn;
+      menu.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onOutside, true);
+      if (refocus && held) btn.focus();
+    }
+    btn.addEventListener("click", function () { if (isOpen()) close(true); else open(); });
+    // Any link, the Top one included — all of them leave the panel behind.
+    menu.addEventListener("click", function (e) { if (e.target.closest("a")) close(false); });
+  })();
+
+  // Scroll-spy driving both maps of the page: the header menu and the
+  // .section-nav rail. OFFSET is the fold line under the sticky header — a
+  // heading counts as current once its top crosses it. It reads --header-h,
+  // the same custom property the CSS sizes the bar and every jump offset
+  // from, so changing the header height cannot leave this behind.
+  // currentId() stops at the first target still below the line, which assumes
+  // targets stays in document order; both maps list the page in order, and
+  // reordering either would break the spy.
+  //
+  // Targets are two deep: sections and the sub-headings inside them. The menu
+  // lists every sub-heading at once, while the rail shows only the ones
+  // belonging to the section you are in — it is fixed and would otherwise run
+  // past the bottom of the window.
+  (function () {
+    var OFFSET = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 68) + 52;
+    var links = [].slice.call(document.querySelectorAll(".nm-link[data-sn], .sn-link[data-sn]"));
+    var railSubs = [].slice.call(document.querySelectorAll(".sn-sub[data-sn]"));
+    var seen = {};
+    var targets = [];
+    var parentOf = {};
+    links.forEach(function (l) {
+      var id = l.getAttribute("data-sn");
+      var el = document.getElementById(id);
+      if (!el || seen[id]) return;
+      seen[id] = true;
+      targets.push(el);
+      // A sub-heading lives inside its section; a section is its own parent.
+      var sec = el.closest("section[id]");
+      parentOf[id] = sec && sec.id !== id ? sec.id : id;
+    });
+    if (!targets.length) return;
+    function setActive(id) {
+      var top = parentOf[id] || id;
+      links.forEach(function (l) {
+        var t = l.getAttribute("data-sn");
+        l.classList.toggle("is-active", t === id || t === top);
+      });
+      railSubs.forEach(function (l) { l.hidden = parentOf[l.getAttribute("data-sn")] !== top; });
+    }
+    function currentId() {
+      var id = targets[0].id;
+      for (var i = 0; i < targets.length; i++) {
+        if (targets[i].getBoundingClientRect().top - OFFSET <= 1) id = targets[i].id;
+        else break;
+      }
+      if (window.innerHeight + Math.ceil(window.scrollY) >= document.documentElement.scrollHeight - 2) {
+        id = targets[targets.length - 1].id;
+      }
+      return id;
+    }
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    links.forEach(function (l) {
+      l.addEventListener("click", function (e) {
+        var el = document.getElementById(l.getAttribute("data-sn"));
+        if (!el) return;
+        e.preventDefault();
+        setActive(l.getAttribute("data-sn"));
+        // preventDefault costs us the fragment's focus move, and the header
+        // menu hides itself right after, which would drop focus to <body> and
+        // restart tabbing at the top of the document. Hand it to the section.
+        el.setAttribute("tabindex", "-1");
+        el.focus({ preventScroll: true });
+        el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        history.replaceState(null, "", "#" + l.getAttribute("data-sn"));
+      });
+    });
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () { setActive(currentId()); ticking = false; });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    setActive(currentId());
+  })();
+</script>
+</body>
+</html>
