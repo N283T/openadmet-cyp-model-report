@@ -141,10 +141,47 @@
     };
   }
 
+  // Standalone OOF of every member against the final ensemble, per endpoint.
+  function optMembers(d, p) {
+    var rows = d.endpoints;
+    var cats = rows.map(function (r) { return r.label; });
+    var field = [], ens = [];
+    rows.forEach(function (r, ci) {
+      r.members.forEach(function (m, i) {
+        field.push([m[1], ci + jitter(i + ci * 331) * 0.55, m[0]]);
+      });
+      ens.push([r.ensemble, ci, "ensemble"]);
+    });
+    var idx = cats.map(function (_, i) { return i; });
+    return {
+      textStyle: { color: p.ink, fontFamily: p.font },
+      grid: { left: 8, right: 18, top: 12, bottom: 42, containLabel: true },
+      tooltip: tooltip(p, function (o) {
+        return o.data[2] + "<br/>OOF ST-RAE <b>" + o.data[0].toFixed(3) + "</b>";
+      }),
+      xAxis: Object.assign({ type: "value", min: 0.3, max: 1.05, inverse: true,
+        name: t("OOF ST-RAE (better →)", "OOF ST-RAE（右ほど良い）"), nameLocation: "middle", nameGap: 28 }, axisStyle(p)),
+      yAxis: Object.assign({
+        type: "value", inverse: true, min: -0.5, max: rows.length - 0.5,
+        axisLabel: { color: p.ink, fontFamily: p.font, customValues: idx,
+          formatter: function (v) { return cats[v] !== undefined ? cats[v] : ""; } },
+        axisTick: { customValues: idx }, splitLine: { show: false },
+      }, (function () { var a = axisStyle(p); delete a.axisLabel; delete a.axisTick; delete a.splitLine; return a; })()),
+      series: [
+        { type: "scatter", data: field, symbolSize: 8, itemStyle: { color: p.blue, opacity: 0.6 } },
+        { type: "scatter", data: ens, symbol: "diamond", symbolSize: 18, z: 5,
+          itemStyle: { color: p.coral, borderColor: p.ink, borderWidth: 1.2 },
+          label: { show: true, position: "top", color: p.ink, fontSize: 11,
+            formatter: function (o) { return o.data[0].toFixed(3); } } },
+      ],
+    };
+  }
+
   var SPECS = [
     { el: "chart-strip-reg", file: "standings.json", build: optStrip("regression") },
     { el: "chart-strip-cls", file: "standings.json", build: optStrip("classification") },
     { el: "chart-boards", file: "standings.json", build: optBoards },
+    { el: "chart-members", file: "members.json", build: optMembers },
   ];
 
   function renderAll() {

@@ -1,0 +1,137 @@
+{
+ "note": "Standalone out-of-fold ST-RAE of every member in each final regression column, and the ensemble value used in Table 4. Sources: research log RL0114, RL0115, RL0119, RL0180, RL0204 and the run summaries cited there.",
+ "endpoints": [
+  {
+   "label": "CYP1A2",
+   "ensemble": 0.671,
+   "members": [
+    [
+     "jeremy_scores_log2fc_tabpfn26",
+     0.7302
+    ],
+    [
+     "jeremy_finetuned_log2fc_lgbm",
+     0.7209
+    ],
+    [
+     "chemeleon_pca256_log2fc_tabicl",
+     0.7443
+    ],
+    [
+     "tabpfn35_fast_pub030_raw",
+     0.6965
+    ],
+    [
+     "lgbm_all_pool_top512",
+     0.6934
+    ],
+    [
+     "lgbm_jeremy_all_log2fc",
+     0.6941
+    ],
+    [
+     "lgbm_dense_pool_top256",
+     0.6947
+    ],
+    [
+     "tabpfn35fast_all_pool_top512",
+     0.6905
+    ],
+    [
+     "ligand_only--trunk--tabpfn_top500",
+     0.7619
+    ],
+    [
+     "core_bidirectional_hem--trunk--tabpfn_top500",
+     0.7612
+    ]
+   ]
+  },
+  {
+   "label": "CYP2C9",
+   "ensemble": 0.455,
+   "members": [
+    [
+     "jeremy_scores_log2fc_tabpfn26",
+     0.5273
+    ],
+    [
+     "jeremy_finetuned_log2fc_lgbm",
+     0.4946
+    ],
+    [
+     "chemeleon_pca256_log2fc_tabicl",
+     0.5015
+    ],
+    [
+     "owned_broad5_2c9_specialist_lgbm",
+     0.5522
+    ],
+    [
+     "tabpfn35_full_pub030_raw",
+     0.5079
+    ]
+   ]
+  },
+  {
+   "label": "CYP2D6",
+   "ensemble": 0.82,
+   "members": [
+    [
+     "two-member core",
+     0.8284
+    ],
+    [
+     "Boltz trunk branch",
+     0.8716
+    ],
+    [
+     "robust bound branch",
+     1.01
+    ]
+   ]
+  },
+  {
+   "label": "CYP3A4",
+   "ensemble": 0.395,
+   "members": [
+    [
+     "tabpfn35_full_anchor59_raw_scores_logfc",
+     0.4288
+    ],
+    [
+     "tdi_continuous_arm_lgbm",
+     0.4324
+    ],
+    [
+     "jeremy_finetuned_log2fc_lgbm",
+     0.4304
+    ],
+    [
+     "morgan_quantile_065_lgbm",
+     0.7397
+    ],
+    [
+     "chemeleon_pca256_log2fc_tabicl",
+     0.451
+    ],
+    [
+     "class_quantile_065_lgbm",
+     0.5817
+    ],
+    [
+     "tabpfn35_fast_anchor59_raw_scores_logfc",
+     0.4295
+    ],
+    [
+     "tdi_continuous_delta_lgbm",
+     0.4348
+    ],
+    [
+     "jeremy_scores_log2fc_tabpfn26",
+     0.4437
+    ]
+   ]
+  }
+ ]
+}
