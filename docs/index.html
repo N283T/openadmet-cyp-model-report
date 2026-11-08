@@ -42,13 +42,19 @@
         <a class="nm-link" href="#challenge" data-sn="challenge"><span class="nm-num">1</span><span>The challenge</span></a>
         <a class="nm-link" href="#results" data-sn="results"><span class="nm-num">2</span><span>Results</span></a>
         <a class="nm-link nm-sub" href="#three-boards" data-sn="three-boards"><span>Three boards</span></a>
-        <a class="nm-link" href="#regression" data-sn="regression"><span class="nm-num">3</span><span>Regression model</span></a>
-        <a class="nm-link" href="#classification" data-sn="classification"><span class="nm-num">4</span><span>Classification model</span></a>
+        <a class="nm-link" href="#blocks" data-sn="blocks"><span class="nm-num">3</span><span>Data and building blocks</span></a>
+        <a class="nm-link" href="#regression" data-sn="regression"><span class="nm-num">4</span><span>Regression ensembles</span></a>
+        <a class="nm-link nm-sub" href="#reg-1a2" data-sn="reg-1a2"><span>CYP1A2</span></a>
+        <a class="nm-link nm-sub" href="#reg-2c9" data-sn="reg-2c9"><span>CYP2C9</span></a>
+        <a class="nm-link nm-sub" href="#reg-2d6" data-sn="reg-2d6"><span>CYP2D6</span></a>
+        <a class="nm-link nm-sub" href="#reg-3a4" data-sn="reg-3a4"><span>CYP3A4</span></a>
+        <a class="nm-link" href="#placement" data-sn="placement"><span class="nm-num">5</span><span>Placement and the leaderboard</span></a>
+        <a class="nm-link" href="#classification" data-sn="classification"><span class="nm-num">6</span><span>Classification models</span></a>
         <a class="nm-link nm-sub" href="#d6-pseudo" data-sn="d6-pseudo"><span>2D6 pseudo-negatives</span></a>
         <a class="nm-link nm-sub" href="#a4-equal7" data-sn="a4-equal7"><span>3A4 equal mean</span></a>
-        <a class="nm-link" href="#validation" data-sn="validation"><span class="nm-num">5</span><span>Validation</span></a>
-        <a class="nm-link" href="#negatives" data-sn="negatives"><span class="nm-num">6</span><span>What did not work</span></a>
-        <a class="nm-link" href="#conclusion" data-sn="conclusion"><span class="nm-num">7</span><span>Conclusion</span></a>
+        <a class="nm-link" href="#validation" data-sn="validation"><span class="nm-num">7</span><span>Validation</span></a>
+        <a class="nm-link" href="#negatives" data-sn="negatives"><span class="nm-num">8</span><span>What did not work</span></a>
+        <a class="nm-link" href="#conclusion" data-sn="conclusion"><span class="nm-num">9</span><span>Conclusion</span></a>
         <hr class="nm-sep" />
         <a class="nm-link" href="#links" data-sn="links"><span class="nm-num"></span><span>Reproducibility and links</span></a>
       </nav>
@@ -71,7 +77,13 @@
   <a class="sn-link" href="#challenge" data-sn="challenge"><span class="sn-dot"></span><span>Challenge</span></a>
   <a class="sn-link" href="#results" data-sn="results"><span class="sn-dot"></span><span>Results</span></a>
   <a class="sn-link sn-sub" href="#three-boards" data-sn="three-boards" hidden><span class="sn-dot"></span><span>Boards</span></a>
+  <a class="sn-link" href="#blocks" data-sn="blocks"><span class="sn-dot"></span><span>Blocks</span></a>
   <a class="sn-link" href="#regression" data-sn="regression"><span class="sn-dot"></span><span>Regression</span></a>
+  <a class="sn-link sn-sub" href="#reg-1a2" data-sn="reg-1a2" hidden><span class="sn-dot"></span><span>1A2</span></a>
+  <a class="sn-link sn-sub" href="#reg-2c9" data-sn="reg-2c9" hidden><span class="sn-dot"></span><span>2C9</span></a>
+  <a class="sn-link sn-sub" href="#reg-2d6" data-sn="reg-2d6" hidden><span class="sn-dot"></span><span>2D6</span></a>
+  <a class="sn-link sn-sub" href="#reg-3a4" data-sn="reg-3a4" hidden><span class="sn-dot"></span><span>3A4</span></a>
+  <a class="sn-link" href="#placement" data-sn="placement"><span class="sn-dot"></span><span>Placement</span></a>
   <a class="sn-link" href="#classification" data-sn="classification"><span class="sn-dot"></span><span>Classification</span></a>
   <a class="sn-link sn-sub" href="#d6-pseudo" data-sn="d6-pseudo" hidden><span class="sn-dot"></span><span>2D6</span></a>
   <a class="sn-link sn-sub" href="#a4-equal7" data-sn="a4-equal7" hidden><span class="sn-dot"></span><span>3A4</span></a>
@@ -112,7 +124,7 @@
         finished <strong>7th of 62</strong>, in the second significance tier behind three entries.</li>
       <li>Every regression column is a <a href="#regression">per-endpoint ensemble</a> of tabular readouts
         (TabPFN, TabICL, LightGBM) over descriptors, frozen pretrained embeddings and Boltz-2 trunk features.
-        The output was rescaled to a fixed mean and spread. That single placement step was the largest regression gain of the whole challenge, and it deserves a caveat (see <a href="#regression">section 3</a>).</li>
+        The output was rescaled to a fixed mean and spread. That single placement step was the largest regression gain of the whole challenge, and it deserves a caveat (<a href="#placement">section 5</a>).</li>
       <li>The one idea I would keep from <a href="#classification">classification</a>: every supplied CYP2D6 TDI label sits on a
         primary-screen hit, so molecules that were clearly inactive in the primary screen were added as
         <strong>pseudo-negatives</strong>. This fixed a coverage defect in the training labels, and the device validated on labels it never saw.</li>
@@ -194,88 +206,232 @@
       (the Final board lists 103 and 62 entries against 282 and 164 users on the last Live board).</p>
   </section>
 
-  <section id="regression">
-    <h2>3. Regression model</h2>
+  <section id="blocks">
+    <h2>3. Data and building blocks</h2>
     <p>
-      Each endpoint has its own ensemble, built and selected separately. The pieces they share:
+      Most members are built from the same few pieces. Each piece is named here once, and the ensemble tables below use the short names.
     </p>
+    <h3 id="data-used">Data</h3>
     <ul>
-      <li><strong>Tabular readouts.</strong> TabPFN (2.6 and 3.5), TabICL, LightGBM and, for some members, CatBoost and ExtraTrees,
-        on Mordred descriptors, Morgan fingerprints and frozen embeddings (<a href="https://github.com/JacksonBurns/chemeleon">CheMeleon</a>
-        raw and PCA-256).</li>
-      <li><strong>The primary screen as a feature.</strong> The challenge's single-concentration primary-screen readout (log2fc) is
-        predicted out of fold and fed to the readouts. Members carrying it are the <code>*_log2fc</code> rows.</li>
-      <li><strong>External multi-task supervision.</strong> 156,372 public CYP potency observations on 35,320 compounds from
-        ChEMBL 36, PubChem AID1851 and Tox21 P450-Glo, with every challenge connectivity block removed, train a 59-task encoder
-        whose scores feed the <code>anchor59</code> and <code>pub030</code> members.</li>
-      <li><strong>Community encoders.</strong> Frozen CYP-adapted encoders from the public reproduction kit of another participant
-        (<a href="https://github.com/jeremycheminf/openadmet_scripts">jeremycheminf/openadmet_scripts</a>), the <code>jeremy_*</code> members.</li>
-      <li><strong>Boltz-2 trunk features.</strong> Pooled single and pair representations of each ligand in the CYP/heme complex,
-        in two 1A2 members and a 0.2-weight 2D6 branch.</li>
-      <li><strong>Placement.</strong> Each column is rescaled to a fixed mean and standard deviation, so that only its ranking is learned.
-        The target moments are not mine: another participant (SuperCowPowers) inferred them for the blind labels by submitting affine-transformed predictions
-        and reading the leaderboard, published the constants, and a second participant's reproduction kit reused them. I adopted them.
-        For 2D6 this one step moved Live ST-RAE from 1.354 to 0.566 on 2026-09-13, more than any model change afterwards.
-        It is information about the test set obtained from leaderboard feedback, not modelling skill, so read the regression ranks with that in mind.</li>
+      <li><strong>Challenge data.</strong> Direct-inhibition pIC50 for the four isoforms, the TDI labels, the pIC50 measured under the TDI condition
+        (after preincubation with NADPH), and the single-concentration primary screen (log2fc, about 49.5 µM).</li>
+      <li><strong>Public CYP data.</strong> ChEMBL 36, PubChem AID 1851 (the Veith P450-Glo screen) and Tox21 P450-Glo, merged into 156,372 observations on 35,320 compounds
+        for the multi-task encoders. A CYP2C9 specialist encoder used 59,255 direct 2C9 observations on 33,281 compounds from ChEMBL, PubChem, Tox21, TDC and Novartis.
+        Every connectivity block shared with the challenge was removed first.</li>
+      <li><strong>No proprietary data.</strong> Pretrained models that were used are listed in the next table.</li>
     </ul>
-    <figure class="chart-figure" id="tbl-reg">
+    <figure class="chart-figure" id="tbl-blocks">
       <div class="table-scroll">
       <table class="metric-table">
-        <thead><tr><th>Endpoint</th><th>Ensemble</th><th>Dev ST-RAE</th><th>Since</th></tr></thead>
+        <thead><tr><th>Name</th><th class="txt-h">What it is</th></tr></thead>
         <tbody>
-          <tr><th>CYP1A2</th><td style="text-align:left;font-weight:500;color:var(--ink)">equal mean of ten members; two replaced by Boltz trunk readouts</td><td>0.671</td><td>10-01</td></tr>
-          <tr><th>CYP2C9</th><td style="text-align:left;font-weight:500;color:var(--ink)">fold-stable equal subset of the 2C9 bank</td><td>0.455</td><td>09-17</td></tr>
-          <tr><th>CYP2D6</th><td style="text-align:left;font-weight:500;color:var(--ink)">0.4 two-member core, 0.4 robust bound branch, 0.2 Boltz trunk LightGBM; then a 0.1 CYPMol blend</td><td>0.820</td><td>10-29</td></tr>
-          <tr><th>CYP3A4</th><td style="text-align:left;font-weight:500;color:var(--ink)">nine-member Caruana, including an encoder of the TDI-condition pIC50 arm</td><td>0.395</td><td>09-17</td></tr>
+          <tr><th><code>anchor59</code></th><td class="txt">A width-600 message-passing encoder trained from scratch on 78,449 challenge-disjoint compounds with a masked MSE over 59 continuous CYP tasks. Used as its 600-d embedding (<code>raw</code>) and its predicted task values (<code>scores</code>).</td></tr>
+          <tr><th><code>pub030</code></th><td class="txt">A student initialised from the <code>jeremy</code> checkpoint and adapted to the PubChem AID 1851 five-head qHTS data, with a teacher-anchor weight of 0.3.</td></tr>
+          <tr><th><code>jeremy_*</code></th><td class="txt">The public chemprop “medium” checkpoint with 47 regression heads, taken from the reproduction kit of <a href="https://github.com/jeremycheminf/openadmet_scripts">jeremycheminf/openadmet_scripts</a>. <code>frozen</code> is its 600-d embedding, <code>scores</code> its 47 task values, <code>finetuned</code> the embedding after fine-tuning on the challenge labels. Its pretraining corpus manifest is not available; I disclose that and do not treat it as leakage.</td></tr>
+          <tr><th><code>chemeleon_pca256</code></th><td class="txt"><a href="https://github.com/JacksonBurns/chemeleon">CheMeleon</a> 2048-d frozen fingerprint reduced to 256 dimensions by PCA, fit on the readout's training rows only.</td></tr>
+          <tr><th><code>*_log2fc</code></th><td class="txt">Four predicted primary-screen values, from ten CheMeleon-initialised models that each leave out a pair of outer folds. Training rows receive nested out-of-sample predictions, validation rows the mean of the four eligible models.</td></tr>
+          <tr><th><code>tdi_continuous_*</code></th><td class="txt">A 600-d representation from a chemprop encoder fine-tuned with extra continuous heads: the TDI-condition pIC50 (<code>arm</code>), and in addition the measured TDI-minus-direct differences (<code>delta</code>). The benefit is the representation, not a calibrated TDI probability.</td></tr>
+          <tr><th>Boltz-2 trunk</th><td class="txt">Frozen trunk output for the ligand in the CYP/heme complex: the protein and ligand mean of the single representation, and the mean and max of the core-pocket-to-ligand pair representation, concatenated with CheMeleon and Mordred features.</td></tr>
+          <tr><th><code>dense_pool</code>, <code>all_pool</code></th><td class="txt">Mordred plus the embedding blocks above (plus Morgan for <code>all_pool</code>), cut to the top K columns by LightGBM gain on the outer-training rows only, then refit.</td></tr>
+          <tr><th><code>quantile_065</code></th><td class="txt">LightGBM with a quantile loss at α = 0.65 (300 trees, 15 leaves), on Morgan or on an external classification-pretrained embedding. Two survivors of a compression of a 20-model 3A4 component.</td></tr>
+          <tr><th>CYPMol</th><td class="txt"><a href="https://github.com/CjmTH/CYPMol">CjmTH/CYPMol</a>: a Uni-Mol encoder with ESM-2 isoform and pocket embeddings, trained on 67,411 public CYP inhibitor rows. I used the 512-d vector averaged over three conformers, from ten released members. 200 of 6,146 development compounds and 1 of 750 blind compounds are in its training set, and excluding them leaves the 2D6 effect intact.</td></tr>
         </tbody>
       </table>
       </div>
-      <figcaption>Table 3: The final regression columns. Development ST-RAE is series-grouped five-fold out-of-fold error, on a different scale from the leaderboard.</figcaption>
+      <figcaption>Table 3: Recurring building blocks. “Raw” and “scores” are the embedding and predicted-value views of the same encoder.</figcaption>
     </figure>
+    <h3 id="readouts">Readouts and combiners</h3>
+    <ul>
+      <li><strong>Readouts.</strong> TabPFN 2.6 (8 estimators), TabPFN 3.5-fast, TabICL v2 (8 estimators), and LightGBM with an L1 objective (one member tuned with Optuna).
+        A TabPFN 3.5 “fast” and “full” run of the same recipe correlate at 0.987–0.997.</li>
+      <li><strong>Equal mean</strong> where the evidence did not support fitted weights.</li>
+      <li><strong>Caruana selection:</strong> greedy forward selection with replacement, starting empty, adding the member that most lowers the pooled ST-RAE of the running mean.
+        The step count is chosen from {5, 10, 20, 50} by an inner cross-validation. Deployed weights are the mean of the five outer-fold weight vectors, which is why they are fractional.</li>
+      <li><strong>Moment matching:</strong> rescale a column to a reference mean and standard deviation, <code>ref.mean + (x − x.mean) / x.std × ref.std</code>, so only the ranking changes.
+        It is applied per fold in development and once to the final blind column. See <a href="#placement">section 5</a>.</li>
+    </ul>
+  </section>
+
+  <section id="regression">
+    <h2>4. The regression ensembles</h2>
     <p>
-      Two endpoint-specific pieces did measurable work. For <strong>3A4</strong>, a learned representation of the TDI-condition pIC50
-      column (the same assay after preincubation) carries about a fifth of the Caruana weight. For <strong>2D6</strong>, a robust branch fits pIC50
-      with a pseudo-Huber loss plus a one-sided penalty on predictions above pIC50 4 for 2,823 compounds with a weak measured primary response.
-      It encodes "these are probably inactive" without inventing labels.
+      Each endpoint has its own column, built and selected separately. “OOF” is series-grouped five-fold out-of-fold ST-RAE (lower is better) and is on a different scale
+      from the leaderboard. The standalone numbers are for the member alone.
+    </p>
+    <figure class="chart-figure" id="tbl-reg">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Endpoint</th><th class="txt-h">Combiner</th><th>Dev OOF</th><th>Since</th></tr></thead>
+        <tbody>
+          <tr><th>CYP1A2</th><td class="txt">equal mean of ten members; two replaced by Boltz trunk readouts</td><td>0.671</td><td>10-01</td></tr>
+          <tr><th>CYP2C9</th><td class="txt">equal mean of five members chosen from a bank of eleven</td><td>0.455</td><td>09-17</td></tr>
+          <tr><th>CYP2D6</th><td class="txt">three branches, then a 0.1 CYPMol blend</td><td>0.820</td><td>10-29</td></tr>
+          <tr><th>CYP3A4</th><td class="txt">nine-member Caruana, including TDI-condition representations</td><td>0.395</td><td>09-17</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 4: The final regression columns. Adopting the Boltz trunk members moved saved-OOF slightly (1A2 to 0.666, 2D6 to 0.816). These are conditional numbers, not nested refits.</figcaption>
+    </figure>
+
+    <h3 id="reg-1a2">CYP1A2: ten equal members</h3>
+    <figure class="chart-figure" id="tbl-1a2">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Member</th><th class="txt-h">Features → readout</th><th>OOF</th></tr></thead>
+        <tbody>
+          <tr class="ref"><th><code>jeremy_frozen_tabpfn26</code> *</th><td class="txt">frozen 600-d embedding → TabPFN 2.6</td><td>.727</td></tr>
+          <tr><th><code>jeremy_scores_log2fc_tabpfn26</code></th><td class="txt">47 task scores + log2fc → TabPFN 2.6</td><td>.730</td></tr>
+          <tr><th><code>jeremy_finetuned_log2fc_lgbm</code></th><td class="txt">fine-tuned 600-d + log2fc → Optuna-tuned LightGBM</td><td>.721</td></tr>
+          <tr><th><code>chemeleon_pca256_log2fc_tabicl</code></th><td class="txt">CheMeleon PCA-256 + log2fc → TabICL</td><td>.744</td></tr>
+          <tr><th><code>tabpfn35_fast_pub030_raw</code></th><td class="txt">PubChem-adapted embedding → TabPFN 3.5-fast</td><td>.697</td></tr>
+          <tr class="ref"><th><code>tabpfn35_fast_anchor59_raw_scores_logfc</code> *</th><td class="txt">anchor59 raw + scores + log2fc → TabPFN 3.5-fast</td><td>.708</td></tr>
+          <tr><th><code>lgbm_all_pool_top512</code></th><td class="txt">all-pool, top 512 → LightGBM</td><td>.693</td></tr>
+          <tr><th><code>lgbm_jeremy_all_log2fc</code></th><td class="txt">jeremy raw + scores + log2fc → LightGBM</td><td>.694</td></tr>
+          <tr><th><code>lgbm_dense_pool_top256</code></th><td class="txt">dense-pool, top 256 → LightGBM</td><td>.695</td></tr>
+          <tr><th><code>tabpfn35fast_all_pool_top512</code></th><td class="txt">all-pool, top 512 → TabPFN 3.5-fast</td><td>.691</td></tr>
+          <tr class="hi"><th><code>ligand_only--trunk--tabpfn_top500</code></th><td class="txt">Boltz-2 trunk, ligand only, top 500 → TabPFN (replaces the second *)</td><td>.762</td></tr>
+          <tr class="hi"><th><code>core_bidirectional_hem--trunk--tabpfn_top500</code></th><td class="txt">Boltz-2 trunk, core pocket ↔ ligand, top 500 → TabPFN (replaces the first *)</td><td>.761</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 5: CYP1A2. Each member has weight 0.1. The ten members of the original column are listed with the two replaced ones marked *. The replacement cap of two was chosen on held-out folds.</figcaption>
+    </figure>
+
+    <h3 id="reg-2c9">CYP2C9: five equal members</h3>
+    <figure class="chart-figure" id="tbl-2c9">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Member</th><th class="txt-h">Features → readout</th><th>OOF</th></tr></thead>
+        <tbody>
+          <tr><th><code>jeremy_scores_log2fc_tabpfn26</code></th><td class="txt">47 task scores + log2fc → TabPFN 2.6</td><td>.527</td></tr>
+          <tr><th><code>jeremy_finetuned_log2fc_lgbm</code></th><td class="txt">fine-tuned 600-d + log2fc → LightGBM</td><td>.495</td></tr>
+          <tr><th><code>chemeleon_pca256_log2fc_tabicl</code></th><td class="txt">CheMeleon PCA-256 + log2fc → TabICL</td><td>.502</td></tr>
+          <tr><th><code>owned_broad5_2c9_specialist_lgbm</code></th><td class="txt">concatenation of five owned views plus the 2C9 specialist encoder → LightGBM</td><td>.552</td></tr>
+          <tr><th><code>tabpfn35_full_pub030_raw</code></th><td class="txt">PubChem-adapted embedding → TabPFN 3.5 (full)</td><td>.508</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 6: CYP2C9, weight 0.2 each, ensemble OOF 0.455 against 0.463 for the control. The equal subset was the same in all five outer folds. This column has not changed since 2026-09-17.</figcaption>
+    </figure>
+
+    <h3 id="reg-2d6">CYP2D6: three branches and a small blend</h3>
+    <ul>
+      <li><strong>Core, weight 0.4.</strong> The equal mean of <code>jeremy_scores_log2fc_tabpfn26</code> and <code>jeremy_finetuned_log2fc_lgbm</code>, the two-member subset found by target-wise pruning. OOF 0.828.</li>
+      <li><strong>Robust bound branch, weight 0.4.</strong> LightGBM (300 trees, 15 leaves) on the same features with a pseudo-Huber loss (δ = 0.5), plus a one-sided pseudo-Huber penalty above pIC50 4.0 on 2,823 compounds with a weak primary response (log2fc cutoff −0.5), constraint weight 0.35.
+        It is blended 50/50 with the core after per-fold moment matching. Alone it is worse in ST-RAE (1.010) but ranks better; blended it gives 0.820 (parent) and 0.810 (scaffold) against 0.828 and 0.822 for the control.</li>
+      <li><strong>Boltz trunk branch, weight 0.2.</strong> <code>pxr_core--trunk_molecular--lgbm_l1</code>: Boltz-2 trunk features with CheMeleon and Mordred → LightGBM L1 (400 trees, 15 leaves, learning rate 0.04). Alone 0.872, yet it received 20–25% Caruana weight in every held-out fold. The three branches together: 0.816.</li>
+      <li><strong>CYPMol blend, weight 0.1.</strong> The equal mean of nine recipes over the ten-member CYPMol vectors: the four isoform blocks × {TabPFN 2.6, LightGBM} plus an all-blocks TabPFN, each refit on all 1,457 labelled rows. The blend was moment-matched, so it changes ranking only (mean |Δ| 0.011, Spearman 0.9996 with the base). OOF change −0.0018 [−0.0037, +0.0002], better in 4 of 5 folds. It was the only late blend that also held up on the leaderboard.</li>
+    </ul>
+
+    <h3 id="reg-3a4">CYP3A4: nine members, Caruana</h3>
+    <figure class="chart-figure" id="tbl-3a4">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>Member</th><th class="txt-h">Features → readout</th><th>Weight</th><th>OOF</th></tr></thead>
+        <tbody>
+          <tr class="hi"><th><code>tabpfn35_full_anchor59_raw_scores_logfc</code></th><td class="txt">anchor59 raw + scores + log2fc → TabPFN 3.5</td><td>.244</td><td>.429</td></tr>
+          <tr class="hi"><th><code>tdi_continuous_arm_lgbm</code></th><td class="txt">TDI-arm representation → LightGBM</td><td>.208</td><td>.432</td></tr>
+          <tr><th><code>jeremy_finetuned_log2fc_lgbm</code></th><td class="txt">fine-tuned 600-d + log2fc → LightGBM</td><td>.120</td><td>.430</td></tr>
+          <tr><th><code>morgan_quantile_065_lgbm</code></th><td class="txt">Morgan, quantile 0.65 → LightGBM</td><td>.112</td><td>.740</td></tr>
+          <tr><th><code>chemeleon_pca256_log2fc_tabicl</code></th><td class="txt">CheMeleon PCA-256 + log2fc → TabICL</td><td>.104</td><td>.451</td></tr>
+          <tr><th><code>class_quantile_065_lgbm</code></th><td class="txt">external classification-pretrained embedding, quantile 0.65 → LightGBM</td><td>.096</td><td>.582</td></tr>
+          <tr><th><code>tabpfn35_fast_anchor59_raw_scores_logfc</code></th><td class="txt">as the first row → TabPFN 3.5-fast</td><td>.068</td><td>.430</td></tr>
+          <tr><th><code>tdi_continuous_delta_lgbm</code></th><td class="txt">TDI-arm + TDI-minus-direct representation → LightGBM</td><td>.028</td><td>.435</td></tr>
+          <tr><th><code>jeremy_scores_log2fc_tabpfn26</code></th><td class="txt">47 task scores + log2fc → TabPFN 2.6</td><td>.020</td><td>.444</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 7: CYP3A4, ensemble OOF 0.395. The two TDI-condition representations carry about a quarter of the weight. The two quantile members are weak alone (0.74 and 0.58) but are selected for being different from the rest. The TDI proxy rows tried in October are not in this column.</figcaption>
+    </figure>
+
+    <figure class="chart-figure">
+      <div id="chart-members" class="chart" style="height:360px"></div>
+      <figcaption>Figure 3: Standalone OOF of every member (blue) against the final ensemble (coral diamond), per endpoint. The ensemble beats its best member on every endpoint, but only by 0.01–0.04. The members are not very different from each other.</figcaption>
+    </figure>
+  </section>
+
+  <section id="placement">
+    <h2>5. Placement, and what the leaderboard told me</h2>
+    <p>
+      Every regression column is rescaled to a fixed mean and standard deviation (1A2 4.412 / 1.169, 2C9 4.830 / 0.923, 2D6 3.570 / 0.883, 3A4 4.880 / 1.082), so only its ranking comes from the model.
+      The means come from another participant's public analysis (SuperCowPowers), who inferred moments of the blind labels by submitting affine-transformed predictions and reading the leaderboard.
+      A second participant's reproduction kit reused those constants and I adopted them; the spreads were set against that analysis and my own leaderboard results.
+      On 2026-09-13 this moved the Live ST-RAE for 2D6 from 1.354 to 0.566, more than any model change that followed.
+    </p>
+    <p class="note">
+      No model was fitted on test labels, and I never had any. But the leaderboard acted as an information source about the test set in five places, and a reader should weigh the ranks above accordingly:
+    </p>
+    <ol>
+      <li>The fixed means and spreads above.</li>
+      <li>The classification positive rates (about 7.06% for 2D6 and 29.16% for 3A4). I estimated them from leaderboard rows of entries that predicted no positives. They fixed the call counts (49 and 249) and I steered the pseudo-negative pool to a similar rate (7.73%).</li>
+      <li>The choice of which columns to send: 1A2 and 3A4 were reverted to their best-observed versions after the later versions did worse on Live.</li>
+      <li>The calibration of the 2D6 robust branch and CYPMol blend, which was matched to a previously scored vector.</li>
+      <li>The choice of the final 2D6 TDI score, which relied on agreement with seven earlier Live transitions.</li>
+    </ol>
+    <p>
+      The Final board is full-test and independent of the Live half, so it is the fairer number, but it does not remove 1 and 2: the same constants are in the final columns.
     </p>
   </section>
 
   <section id="classification">
-    <h2>4. Classification model</h2>
+    <h2>6. The classification models</h2>
     <h3 id="d6-pseudo">CYP2D6 TDI: pseudo-negatives from the primary screen</h3>
     <p>
       Every supplied 2D6 TDI label is on a molecule that was a hit in the primary screen; the weakest has log2fc −0.59.
-      The published 7.06% positive rate of the blind set implies that most of its scored molecules are not of that kind.
+      The positive rate I estimated for the blind set (about 7.06%) implies that most of its scored molecules are not of that kind.
       A model trained on the labels alone has never seen the easy negatives.
       I added the 2,693 unlabelled molecules with primary log2fc ≥ −0.25 as assigned negatives and excluded the borderline band.
-      The resulting pool has 4,190 molecules and 7.73% positives.
+      The resulting pool has 1,497 official labels plus 2,693 pseudo-negatives, 4,190 molecules with 7.73% positives.
     </p>
     <p>
       The rule was checked where labels exist. Among 638 labelled 1A2, 2C9 and 3A4 TDI rows at log2fc ≥ −0.25 there are zero positives
       (exact 95% upper bound 0.47%). Inducing the same coverage defect on 3A4 and repairing it with the device recovers the whole recoverable gap
       on labels no arm saw.
     </p>
-    <p>
-      The deployed score is an equal percentile-rank mean of the September 15 D6 ensemble and a LightGBM on the pseudo-negative pool. It calls the top 49 of 750.
-      49 is the historical call count. The development optimum is flatter and wider (94–112 calls), but the difference from 49 (+0.01 to +0.02 MCC) was below what the board could resolve,
-      so it was never changed.
-    </p>
+    <figure class="chart-figure" id="tbl-d6">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th class="txt-h">Component</th><th class="txt-h">What it is</th></tr></thead>
+        <tbody>
+          <tr><th>Legacy score (September 15)</th><td class="txt">An equal probability mean of seven blocks: five LightGBM models (400 trees, 15 leaves, learning rate 0.03) on Morgan, Mordred, Morgan + Mordred, an external classification embedding and an external mixed embedding; a TabPFN 2.6 block on the mixed embedding (mean of PCA-256 and raw-600); and a TDI-only Chemprop model. Its rank is then blended with three Morgan-only tails (logistic regression, RBF-SVM, complement naive Bayes) in fixed proportions. Cross-fit AUROC / AP / MCC: .581 / .297 / .110.</td></tr>
+          <tr><th><code>pool_lgbm</code></th><td class="txt">LightGBM (400 trees, 31 leaves, learning rate 0.03, column sample 0.5, balanced class weights, two seeds averaged, no tuning) on Morgan radius 2 / 2048 bits plus 217 RDKit descriptors, trained on the 4,190-molecule pool.</td></tr>
+          <tr class="hi"><th>Final score</th><td class="txt">The equal percentile-rank mean of the two, top 49 of 750 called positive.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 8: CYP2D6 TDI. 49 is the historical call count. The development optimum is flatter and wider (94–112 calls), but the difference from 49 (+0.01 to +0.02 MCC) was below what the board could resolve, so it was never changed.</figcaption>
+    </figure>
     <p class="note">
       On Live this payload moved 2D6 MCC from 0.118 to 0.364. Reconstructed from the published bootstrap aggregates, that move was one more
       true positive and three fewer false positives among about 26 scored positives, which is inside an exchangeable null. On the full test set the
       Final value is 0.3046, against 0.2573 for the 09-24 entry.
     </p>
     <h3 id="a4-equal7">CYP3A4 TDI: seven-member equal mean</h3>
+    <figure class="chart-figure" id="tbl-a4">
+      <div class="table-scroll">
+      <table class="metric-table">
+        <thead><tr><th>#</th><th class="txt-h">Features → readout</th></tr></thead>
+        <tbody>
+          <tr><th>1</th><td class="txt">CheMeleon PCA-256 + nested log2fc + Mordred → TabPFN stack</td></tr>
+          <tr><th>2</th><td class="txt"><code>jeremy</code> 600-d, PCA-256 → TabICL</td></tr>
+          <tr><th>3</th><td class="txt"><code>jeremy</code> 600-d, raw → TabICL</td></tr>
+          <tr><th>4</th><td class="txt"><code>jeremy</code> 600-d, PCA-256 → TabPFN</td></tr>
+          <tr><th>5</th><td class="txt"><code>jeremy</code> 600-d, raw → TabPFN</td></tr>
+          <tr><th>6</th><td class="txt">external classification embedding + Mordred → balanced LightGBM</td></tr>
+          <tr><th>7</th><td class="txt">PXR transfer: Morgan, five classical PXR pEC50 predictions and four frozen Admetica CYP-inhibition probabilities</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <figcaption>Table 9: The seven CYP3A4 TDI members. Each is rank-normalised, the equal mean is taken, and the top 249 of 750 are called positive. An exhaustive search over fixed subsets with the held fold excluded chose the same seven in all five folds. Cross-fit AUROC / AP / MCC: .806 / .523 / .465. Unchanged since September 15.</figcaption>
+    </figure>
     <p>
-      An equal mean of seven members: a CheMeleon + log2fc + Mordred TabPFN; four TabPFN/TabICL readouts of the community encoders (PCA and raw);
-      an external-class + Mordred LightGBM; and a PXR-transfer / Admetica model. Exhaustive fixed-subset selection with the held fold excluded picked the same seven in all five folds.
-      It calls 249 of 750 and did not change after September 15. Raising the call count to 275 on development evidence cost 0.046 MCC on Live and was reverted.
+      Raising the call count to 275 on development evidence cost 0.046 MCC on Live and was reverted.
       Eleven later pool and gate variants did not beat it.
     </p>
   </section>
 
   <section id="validation">
-    <h2>5. Validation, and why the Live board misled</h2>
+    <h2>7. Validation, and why the Live board misled</h2>
     <p>
       Regression used a <strong>series-grouped five-fold split</strong> that keeps every connectivity series inside one fold, with a scaffold split
       as a fixed secondary readout. Classification used UMAP-cluster and scaffold five-fold. Uncertainty came from grouped molecule bootstraps.
@@ -294,7 +450,7 @@
   </section>
 
   <section id="negatives">
-    <h2>6. What did not work</h2>
+    <h2>8. What did not work</h2>
     <ul>
       <li>Fine-tuning MONROE, with challenge auxiliaries or after external CYP pretraining: worse than its own frozen readout.</li>
       <li>Frozen MONROE, MiniMol, OrbMol-v2 and CYPMol embeddings in the regression ensembles: blends moved ST-RAE by at most 0.006, and none transferred.</li>
@@ -307,7 +463,7 @@
   </section>
 
   <section id="conclusion">
-    <h2>7. Conclusion</h2>
+    <h2>9. Conclusion</h2>
     <p>
       Mid-table in regression, near the top in classification. Looking back, three things did real work:
     </p>

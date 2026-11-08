@@ -715,3 +715,9 @@ figcaption { color: var(--muted); font-size: .88rem; margin-top: 10px; padding: 
   .btn, .feature-cell, .result-card, .chart, .nav-bars span { transition: none; }
   .btn:hover, .feature-cell:hover { transform: none; }
 }
+
+/* Text cells in numeric tables (member descriptions). */
+.metric-table tbody td.txt { text-align: left; font-weight: 500; color: var(--ink); min-width: 18rem; font-variant-numeric: normal; }
+.metric-table tbody tr.ref th, .metric-table tbody tr.ref td { border-top: 1px solid var(--line); }
+.metric-table code { font-size: .86em; }
+.metric-table thead th.txt-h { text-align: left; }
